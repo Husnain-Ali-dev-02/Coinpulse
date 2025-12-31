@@ -53,66 +53,92 @@ export default function SearchModal({ open, onClose, coins }: SearchModalProps) 
   }
 
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => isOpen === false && onClose()}>
-      <DialogContent id="search-modal" className="dialog max-w-2xl">
-        <DialogHeader>
-          <DialogTitle className="sr-only">Search coins</DialogTitle>
-          <div className="flex items-center gap-4">
-            <label htmlFor="search" className="sr-only">
-              Search coins
-            </label>
-            <div className="relative flex-1">
-              <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                <Search className="h-4 w-4 text-muted-foreground" />
-              </div>
-              <Input
-                id="search"
-                ref={inputRef}
-                value={query}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
-                placeholder="Search by name or symbol..."
-                className="pl-10"
-                aria-label="Search coins"
-                autoComplete="off"
-              />
-            </div>
-          </div>
-        </DialogHeader>
+   <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
+  <DialogContent
+    className="
+      max-w-2xl
+      rounded-2xl
+      border border-border/60
+      bg-background/95
+      backdrop-blur-xl
+      shadow-2xl
+    "
+  >
+    <DialogHeader>
+      <DialogTitle className="sr-only">Search coins</DialogTitle>
 
-        <div className="mt-4">
-          <ScrollArea className="h-72 rounded-md border bg-background p-2">
-            {filtered.length === 0 ? (
-              <div className="empty text-center py-8 text-sm text-muted-foreground">No coins found</div>
-            ) : (
-              <ul role="list" className="divide-y">
-                {filtered.map((coin) => (
-                  <li
-                    key={coin.id}
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => handleSelect(coin)}
-                    onKeyDown={(e: React.KeyboardEvent<HTMLLIElement>) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault()
-                        handleSelect(coin)
-                      }
-                    }}
-                    className="search-item flex w-full cursor-pointer items-center justify-between gap-4 rounded-md px-3 py-2 hover:bg-accent/40 focus:outline-none focus-visible:ring-ring"
-                  >
-                    <div className="coin-info flex items-center gap-3">
-                      <Image src={coin.image} alt={coin.name} width={32} height={32} className="rounded-full" />
-                      <div className="min-w-0">
-                        <div className="text-sm font-medium">{coin.name}</div>
-                        <div className="coin-symbol text-xs text-muted-foreground uppercase">{coin.symbol}</div>
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </ScrollArea>
+      <div className="flex items-center gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            ref={inputRef}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search coins by name or symbol..."
+            className="
+              h-11
+              rounded-xl
+              border-border/60
+              bg-muted/40
+              pl-10
+              focus-visible:ring-2
+              focus-visible:ring-primary
+            "
+          />
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </DialogHeader>
+
+    <ScrollArea className="mt-4 h-80 rounded-xl border border-border/60 bg-muted/20">
+      {filtered.length === 0 ? (
+        <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
+          No coins found
+        </div>
+      ) : (
+        <ul className="divide-y divide-border/40">
+          {filtered.map((coin) => (
+            <li
+              key={coin.id}
+              tabIndex={0}
+              onClick={() => handleSelect(coin)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault()
+                  handleSelect(coin)
+                }
+              }}
+              className="
+                flex cursor-pointer items-center gap-4
+                rounded-xl
+                px-4 py-3
+                transition-colors
+                hover:bg-primary/10
+                focus-visible:outline-none
+                focus-visible:ring-2
+                focus-visible:ring-primary
+              "
+            >
+              <Image
+                src={coin.image}
+                alt={coin.name}
+                width={36}
+                height={36}
+                className="rounded-full bg-muted"
+              />
+
+              <div className="min-w-0">
+                <p className="truncate text-sm font-medium">{coin.name}</p>
+                <p className="text-xs uppercase text-muted-foreground">
+                  {coin.symbol}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </ScrollArea>
+  </DialogContent>
+</Dialog>
+
   )
 }
