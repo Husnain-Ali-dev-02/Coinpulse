@@ -10,7 +10,7 @@ export const useCoinGeckoWebSocket = ({
   liveInterval,
 }: UseCoinGeckoWebSocketProps): UseCoinGeckoWebSocketReturn => {
   const wsRef = useRef<WebSocket | null>(null);
-  const subscribed = useRef(<Set<string>>new Set());
+ const subscribed = useRef<Set<string>>(new Set());
 
   const [price, setPrice] = useState<ExtendedPriceData | null>(null);
   const [trades, setTrades] = useState<Trade[]>([]);
@@ -25,7 +25,14 @@ export const useCoinGeckoWebSocket = ({
     const send = (payload: Record<string, unknown>) => ws.send(JSON.stringify(payload));
 
     const handleMessage = (event: MessageEvent) => {
-      const msg: WebSocketMessage = JSON.parse(event.data);
+     let msg: WebSocketMessage;
+     try {
+      msg = JSON.parse(event.data);
+     } catch (e) {
+       console.error('Failed to parse WebSocket message:', e);
+       return;
+    }
+
 
       if (msg.type === 'ping') {
         send({ type: 'pong' });
